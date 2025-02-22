@@ -49,7 +49,7 @@ export default function ModalButton({ edit = false, onUpdate, buttonName, title,
                     {buttonName || (edit ? 'Edit Note' : 'Create Note')}
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] bg-main border border-b-4 border-r-4 border-stone-950">
+            <DialogContent className="sm:max-w-[425px] lg:max-w-[800px] bg-main border border-b-4 border-r-4 border-stone-950">
                 <DialogHeader>
                     <DialogTitle>{edit ? 'Edit Your Note' : 'Create Your Note'}</DialogTitle>
                     <DialogDescription>{description || (edit ? 'Modify your note.' : 'Create a new note!')}</DialogDescription>
@@ -67,7 +67,7 @@ export default function ModalButton({ edit = false, onUpdate, buttonName, title,
                             onBlur={formik.handleBlur}
                         />
                         {formik.touched.title && formik.errors.title && (
-                            <div className="text-red-500 col-span-4 text-sm">{formik.errors.title}</div>
+                            <div className="text-red-500 mx-auto col-span-4 text-sm">{formik.errors.title}</div>
                         )}
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
@@ -81,7 +81,7 @@ export default function ModalButton({ edit = false, onUpdate, buttonName, title,
                             onBlur={formik.handleBlur}
                         />
                         {formik.touched.content && formik.errors.content && (
-                            <div className="text-red-500 col-span-4 text-sm">{formik.errors.content}</div>
+                            <div className="text-red-500 mx-auto col-span-4 text-sm">{formik.errors.content}</div>
                         )}
                     </div>
                     <DialogFooter>
