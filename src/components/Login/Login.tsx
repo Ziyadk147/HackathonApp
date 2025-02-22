@@ -30,7 +30,6 @@ export default function Login() {
                 toast({
                     title: "Success",
                     description: "Welcome User! Happy Note Taking.",
-                    action: <ToastAction altText="Goto schedule to undo">Undo</ToastAction>,
                 });
                 navigate('/home')
             } catch (error) {

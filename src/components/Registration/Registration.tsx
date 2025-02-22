@@ -32,7 +32,6 @@ export default function Registration() {
                 toast({
                     title: "Success",
                     description: "Welcome User! Happy Note Taking.",
-                    action: <ToastAction altText="Goto schedule to undo">Undo</ToastAction>,
                 });
                 navigate('/home')
             } catch (error) {
@@ -41,8 +40,7 @@ export default function Registration() {
                 toast({
                     style:{backgroundColor:" #ff6b6b"},
                     title: "Error",
-                    description: 'Invalid email or password',
-                    action: <ToastAction altText="Goto schedule to undo">Undo</ToastAction>,
+                    description: `Registration Error : Email Already In Use `,
                 });
 
             }
