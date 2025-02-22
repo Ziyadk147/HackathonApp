@@ -17,41 +17,69 @@ import { auth } from "../../firebaseConfig.js";
 import { signOut } from "firebase/auth";
 import {useNavigate} from "react-router-dom";
 import getModel from "@/Helpers/getModel.js";
-
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from '@/components/ui/pagination'
 export default function TableCrud() {
     const [notes, setNotes] = useState([]);
-    const navigate = useNavigate()
+    const [lastVisible, setLastVisible] = useState(null);
+    const [previousPages, setPreviousPages] = useState([]);
+    const pageSize = 5;
+    const navigate = useNavigate();
 
+    async function getNote(lastDoc = null, isNext = true) {
+        const { notes, lastVisible } = await getNotes(pageSize, lastDoc);
+        setNotes(notes);
+        setLastVisible(lastVisible);
 
-    async function getNote() {
-        const note = await getNotes();
-        setNotes(note);
+        if (isNext && lastDoc) {
+            setPreviousPages((prev) => [...prev, lastDoc]);
+        }
     }
 
     useEffect(() => {
         getNote();
     }, []);
 
-    async function deletenote(noteId){
-        const deleted = await deleteNote(noteId)
-        getNote()
+    async function deletenote(noteId) {
+        await deleteNote(noteId);
+        getNote();
     }
 
-    async function handleLogout(){
+    async function handleLogout() {
         try {
             await signOut(auth);
-            localStorage.removeItem("token")
-            navigate('/')
+            localStorage.removeItem("token");
+            navigate("/");
         } catch (error) {
             console.error("Error logging out", error);
         }
     }
 
+    function handlePaginateNext() {
+        if (lastVisible) {
+            getNote(lastVisible, true);
+        }
+    }
+
+    function handlePaginatePrevious() {
+        if (previousPages.length > 0) {
+            const prevPage = previousPages[previousPages.length - 2] || null;
+            setPreviousPages((prev) => prev.slice(0, -1));
+            getNote(prevPage, false);
+        }
+    }
 
     return (
         <>
             <div className="flex flex-row w-full justify-end mb-2">
-                <Button className={"bg-main border border-b-4 border-r-4 border-stone-950"} onClick={handleLogout}>
+                <Button className="bg-main border border-b-4 border-r-4 border-stone-950" onClick={handleLogout}>
                     Logout
                 </Button>
                 <ModalButton onUpdate={getNote} buttonName="Create Note" />
@@ -66,37 +94,36 @@ export default function TableCrud() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {notes && notes.map((item, key) => (
-                            <TableRow key={key}>
+                        {notes.map((item) => (
+                            <TableRow key={item.id}>
                                 <TableCell>{item.title}</TableCell>
                                 <TableCell>
-                                    {item.content && item.content.length > 50
-                                        ? item.content.substring(0, 50) + "..."
-                                        : item.content}
+                                    {item.content.length > 50 ? item.content.substring(0, 50) + "..." : item.content}
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex space-x-2">
-                                        {/* View Note Modal */}
                                         <GeneralModal
                                             title={item.title}
                                             description={item.title + "'s Note"}
                                             buttonName="View"
-                                            isNoteView={true}
-                                            content={ item.content}
+                                            isNoteView
+                                            content={item.content}
                                             noteId={item.id}
                                             onUpdate={getNote}
                                         />
-                                        {/* Edit Note Modal - Pass getNote as callback */}
                                         <ModalButton
                                             buttonName="Edit"
-                                            edit={true}
-                                            buttonColor={"bg-bg"}
+                                            edit
+                                            buttonColor="bg-bg"
                                             title="Edit Note"
                                             description="Edit the Note"
                                             initialData={item}
-                                            onUpdate={getNote} // Refresh notes on updatse
+                                            onUpdate={getNote}
                                         />
-                                        <Button className={"bg-bg border border-b-4 border-r-4 border-stone-950"} onClick={() => deletenote(item.id   )}>
+                                        <Button
+                                            className="bg-bg border border-b-4 border-r-4 border-stone-950"
+                                            onClick={() => deletenote(item.id)}
+                                        >
                                             Delete
                                         </Button>
                                     </div>
@@ -105,6 +132,28 @@ export default function TableCrud() {
                         ))}
                     </TableBody>
                 </Table>
+            </div>
+            <div className="flex w-full ">
+                <Pagination className="flex justify-end my-2">
+                    <PaginationContent>
+                        <PaginationItem>
+                            <PaginationPrevious
+                                className="bg-main"
+                                style={{ cursor: "pointer" }}
+                                onClick={handlePaginatePrevious}
+                                disabled={previousPages.length === 0}
+                            />
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationNext
+                                className="bg-main"
+                                style={{ cursor: "pointer" }}
+                                onClick={handlePaginateNext}
+                                disabled={!lastVisible}
+                            />
+                        </PaginationItem>
+                    </PaginationContent>
+                </Pagination>
             </div>
         </>
     );
