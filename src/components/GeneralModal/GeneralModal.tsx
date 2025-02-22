@@ -70,7 +70,7 @@ export default function GeneralModal({ noteId, title, content, isNoteView, descr
                     {buttonName}
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] p-10 bg-main border border-b-4 border-r-4 border-stone-950">
+            <DialogContent className="sm:max-w-[425px] lg:max-w-[800px] p-10 bg-main border border-b-4 border-r-4 border-stone-950">
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
                     <DialogDescription>{description}</DialogDescription>
