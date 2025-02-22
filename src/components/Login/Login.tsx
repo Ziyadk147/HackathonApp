@@ -6,13 +6,11 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import app from '@/firebaseConfig'
+import {auth} from '@/firebaseConfig'
 import { useNavigate } from 'react-router-dom'
-import { Auth } from 'firebase/auth'
 
 export default function Login() {
     const navigate = useNavigate()
-    const  auth = getAuth(app);
     const formik = useFormik({
         initialValues: {
             email: '',
@@ -24,10 +22,13 @@ export default function Login() {
         }),
         onSubmit: async (values, { setSubmitting, setErrors }) => {
             try {
-                await signInWithEmailAndPassword(auth, values.email, values.password)
+                const user = await signInWithEmailAndPassword(auth, values.email, values.password)
+                const token = await user.user.getIdToken();
+                localStorage.setItem("token" , token);
                 navigate('/home')
             } catch (error) {
                 setErrors({ password: 'Invalid email or password' })
+                localStorage.removeItem("token");
             }
             setSubmitting(false)
         },

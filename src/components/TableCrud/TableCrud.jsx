@@ -1,97 +1,103 @@
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
     Table,
     TableBody,
-    TableCaption,
-    TableCell,
-    TableFooter,
     TableHead,
     TableHeader,
     TableRow,
-} from '@/components/ui/table'
+    TableCell
+} from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
 import ModalButton from "../ModalButton/ModalButton.tsx";
-export default  function TableCrud(){
-    const invoices = [
-        {
-            invoice: 'INV001',
-            paymentStatus: 'Paid',
-            totalAmount: '$250.00',
-            paymentMethod: 'Credit Card',
-        },
-        {
-            invoice: 'INV002',
-            paymentStatus: 'Pending',
-            totalAmount: '$150.00',
-            paymentMethod: 'PayPal',
-        },
-        {
-            invoice: 'INV003',
-            paymentStatus: 'Unpaid',
-            totalAmount: '$350.00',
-            paymentMethod: 'Bank Transfer',
-        },
-        {
-            invoice: 'INV004',
-            paymentStatus: 'Paid',
-            totalAmount: '$450.00',
-            paymentMethod: 'Credit Card',
-        },
-        {
-            invoice: 'INV005',
-            paymentStatus: 'Paid',
-            totalAmount: '$550.00',
-            paymentMethod: 'PayPal',
-        },
-        {
-            invoice: 'INV006',
-            paymentStatus: 'Pending',
-            totalAmount: '$200.00',
-            paymentMethod: 'Bank Transfer',
-        },
-        {
-            invoice: 'INV007',
-            paymentStatus: 'Unpaid',
-            totalAmount: '$300.00',
-            paymentMethod: 'Credit Card',
-        },
-    ]
+import { useEffect, useState } from "react";
+import getNotes from "@/Helpers/CRUD/getNotes.js";
+import GeneralModal from "../GeneralModal/GeneralModal.tsx";
+import deleteNote from "@/Helpers/CRUD/deleteNote.js";
+import { auth } from "../../firebaseConfig.js";
+import { signOut } from "firebase/auth";
+import {useNavigate} from "react-router-dom";
 
+export default function TableCrud() {
+    const [notes, setNotes] = useState([]);
+    const navigate = useNavigate()
+    async function getNote() {
+        const note = await getNotes();
+        setNotes(note);
+    }
+
+    useEffect(() => {
+        getNote();
+    }, []);
+
+    async function deletenote(noteId){
+        const deleted = await deleteNote(noteId)
+        getNote()
+    }
+
+    async function handleLogout(){
+        try {
+            await signOut(auth);
+            localStorage.removeItem("token")
+            navigate('/login')
+        } catch (error) {
+            console.error("Error logging out", error);
+        }
+    }
     return (
         <>
-            <div className="flex flex-row w-100 justify-end mb-2">
-                <ModalButton></ModalButton>
+            <div className="flex flex-row w-full justify-end mb-2">
+                <Button className={"bg-main"} onClick={handleLogout}>
+                    Logout
+                </Button>
+                <ModalButton onUpdate={getNote} buttonName="Create Note" />
             </div>
-            <div className="flex flex-row w-full">
+            <div className="flex flex-row w-full boxShadowY boxShadowX">
                 <Table>
-                    <TableCaption className="text-text dark:text-darkText">
-                        A list of your recent invoices.
-                    </TableCaption>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[100px]">Invoice</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Method</TableHead>
-                            <TableHead className="text-right">Amount</TableHead>
+                            <TableHead>Note Title</TableHead>
+                            <TableHead>Note Content</TableHead>
+                            <TableHead>Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {invoices.map((invoice) => (
-                            <TableRow key={invoice.invoice}>
-                                <TableCell className="font-base">{invoice.invoice}</TableCell>
-                                <TableCell>{invoice.paymentStatus}</TableCell>
-                                <TableCell>{invoice.paymentMethod}</TableCell>
-                                <TableCell className="text-right">{invoice.totalAmount}</TableCell>
+                        {notes && notes.map((item, key) => (
+                            <TableRow key={key}>
+                                <TableCell>{item.title}</TableCell>
+                                <TableCell>
+                                    {item.content && item.content.length > 50
+                                        ? item.content.substring(0, 50) + "..."
+                                        : item.content}
+                                </TableCell>
+                                <TableCell>
+                                    <div className="flex space-x-2">
+                                        {/* View Note Modal */}
+                                        <GeneralModal
+                                            title={item.title}
+                                            description={item.title + "'s Note"}
+                                            buttonName="View"
+                                            mainContent={<Textarea value={item.content} readOnly className="h-52" />}
+                                        />
+                                        {/* Edit Note Modal - Pass getNote as callback */}
+                                        <ModalButton
+                                            buttonName="Edit"
+                                            edit={true}
+                                            buttonColor={"bg-bg"}
+                                            title="Edit Note"
+                                            description="Edit the Note"
+                                            initialData={item}
+                                            onUpdate={getNote} // Refresh notes on updatse
+                                        />
+                                        <Button className={"bg-bg"} onClick={() => deletenote(item.id   )}>
+                                            Delete
+                                        </Button>
+                                    </div>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
-                    <TableFooter>
-                        <TableRow>
-                            <TableCell colSpan={3}>Total</TableCell>
-                            <TableCell className="text-right">$2,500.00</TableCell>
-                        </TableRow>
-                    </TableFooter>
                 </Table>
             </div>
         </>
-    )
+    );
 }

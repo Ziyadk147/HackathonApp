@@ -6,12 +6,11 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import app from '@/firebaseConfig'
+import {auth} from '@/firebaseConfig'
 import { useNavigate } from 'react-router-dom'
 import { Auth } from 'firebase/auth'
 
 export default function Registration() {
-    const  auth = getAuth(app);
     const navigate = useNavigate();
     const formik = useFormik({
         initialValues: {
