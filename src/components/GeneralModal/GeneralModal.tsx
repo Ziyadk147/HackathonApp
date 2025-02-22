@@ -13,7 +13,7 @@ import { useState } from "react";
 import getModel from "@/Helpers/getModel";
 import updateNote from "@/Helpers/CRUD/updateNote";
 import getNotes from "@/Helpers/CRUD/getNotes";
-
+import {toast} from "@/hooks/use-toast";
 // @ts-ignore
 export default function GeneralModal({ noteId, title, content, isNoteView, description, buttonName, onUpdate }) {
     const [error, setError] = useState("");
@@ -34,10 +34,19 @@ export default function GeneralModal({ noteId, title, content, isNoteView, descr
             if (!response) {
                 throw new Error("No summary received.");
             }
-
+            toast({
+                // style:{backgroundColor:" #ff6b6b"},
+                title: "Success",
+                description: 'Note Summarized Successfully.',
+            });
             setSummary(response.response.text());
         } catch (err) {
             console.error("Summarization error:", err);
+            toast({
+                style:{backgroundColor:" #ff6b6b"},
+                title: "Error",
+                description: `Summarization Error: ${er}`,
+            });
             setError(err.message || "Failed to summarize.");
         } finally {
             setIsLoading(false);
@@ -53,10 +62,20 @@ export default function GeneralModal({ noteId, title, content, isNoteView, descr
             await updateNote(noteId, title, summary);
             setIsUpdating(false);
             setSummary(undefined)
+            toast({
+                // style:{backgroundColor:" #ff6b6b"},
+                title: "Success",
+                description: `Note Updated Successfully`,
+            });
             if (onUpdate) onUpdate(); // Refresh notes
             setIsOpen(false); // Closes modal on success
         } catch (err) {
             console.error("Update error:", err);
+            toast({
+                style:{backgroundColor:" #ff6b6b"},
+                title: "Error",
+                description: `Update Error ${err}`,
+            });
             setError(err.message || "Failed to update.");
         } finally {
             setIsUpdating(false);

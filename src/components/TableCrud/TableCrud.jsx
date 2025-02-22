@@ -26,12 +26,16 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from '@/components/ui/pagination'
+import { ToastAction } from '@/components/ui/toast'
+import {toast, useToast} from '@/hooks/use-toast'
 export default function TableCrud() {
     const [notes, setNotes] = useState([]);
     const [lastVisible, setLastVisible] = useState(null);
     const [previousPages, setPreviousPages] = useState([]);
     const pageSize = 5;
     const navigate = useNavigate();
+    const { toast } = useToast()
+
 
     async function getNote(lastDoc = null, isNext = true) {
         const { notes, lastVisible } = await getNotes(pageSize, lastDoc);
@@ -48,8 +52,21 @@ export default function TableCrud() {
     }, []);
 
     async function deletenote(noteId) {
-        await deleteNote(noteId);
-        getNote();
+        try{
+            await deleteNote(noteId);
+            toast({
+                title: "Success",
+                description: 'Note Deleted Successfully!',
+            });
+            getNote();
+        }
+        catch(e) {
+            toast({
+                style:{backgroundColor:" #ff6b6b"},
+                title: "Error",
+                description: `Error Deleting Node: ${e}`,
+            });
+        }
     }
 
     async function handleLogout() {
@@ -79,10 +96,10 @@ export default function TableCrud() {
     return (
         <>
             <div className="flex flex-row w-full justify-end mb-2">
-                <Button className="bg-main border border-b-4 border-r-4 border-stone-950" onClick={handleLogout}>
+                <Button className="bg-bg border border-b-4 border-r-4 border-stone-950" onClick={handleLogout}>
                     Logout
                 </Button>
-                <ModalButton onUpdate={getNote} buttonName="Create Note" />
+                <ModalButton onUpdate={getNote} buttonName="Create Note" buttonColor={"bg-bg"} />
             </div>
             <div className="flex flex-row w-full border border-b-4 border-r-4 border-stone-950">
                 <Table>
@@ -138,7 +155,7 @@ export default function TableCrud() {
                     <PaginationContent>
                         <PaginationItem>
                             <PaginationPrevious
-                                className="bg-main"
+                                className="bg-bg border border-b-4 border-r-4 border-stone-950"
                                 style={{ cursor: "pointer" }}
                                 onClick={handlePaginatePrevious}
                                 disabled={previousPages.length === 0}
@@ -146,7 +163,7 @@ export default function TableCrud() {
                         </PaginationItem>
                         <PaginationItem>
                             <PaginationNext
-                                className="bg-main"
+                                className="bg-bg border border-b-4 border-r-4 border-stone-950"
                                 style={{ cursor: "pointer" }}
                                 onClick={handlePaginateNext}
                                 disabled={!lastVisible}
@@ -154,6 +171,7 @@ export default function TableCrud() {
                         </PaginationItem>
                     </PaginationContent>
                 </Pagination>
+
             </div>
         </>
     );

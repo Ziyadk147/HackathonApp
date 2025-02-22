@@ -16,7 +16,8 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import addNote from '@/Helpers/CRUD/addNote';
 import updateNote from '@/Helpers/CRUD/updateNote';
-
+import {ToastAction} from "@/components/ui/toast";
+import {toast} from "@/hooks/use-toast";
 export default function ModalButton({ edit = false, onUpdate, buttonName, title, buttonColor, description, initialData = {} }) {
     const [open, setOpen] = useState(false); // State for modal open/close
 
@@ -30,15 +31,37 @@ export default function ModalButton({ edit = false, onUpdate, buttonName, title,
             content: Yup.string().min(6, 'Content must be at least 6 characters').required('Content is required'),
         }),
         onSubmit: async (values, { setSubmitting, resetForm }) => {
-            if (edit) {
-                await updateNote(initialData.id, values.title, values.content);
-            } else {
-                await addNote(values.title, values.content);
+            try{
+                if (edit) {
+                    await updateNote(initialData.id, values.title, values.content);
+                    toast({
+                        // style:{backgroundColor:" #ff6b6b"},
+                        title: "Success",
+                        description: 'Note Updated Successfully',
+                    });
+                } else {
+                    await addNote(values.title, values.content);
+                    toast({
+                        // style:{backgroundColor:" #ff6b6b"},
+                        title: "Success",
+                        description: 'Note Added Successfully',
+                    });
+                }
+
+                setSubmitting(false);
+                resetForm();
+                if (onUpdate) onUpdate(); // Refresh notes
+                setOpen(false); // Close modal after submission
             }
-            setSubmitting(false);
-            resetForm();
-            if (onUpdate) onUpdate(); // Refresh notes
-            setOpen(false); // Close modal after submission
+            catch (e)  {
+                toast({
+                    style:{backgroundColor:" #ff6b6b"},
+                    title: "Error",
+                    description: 'Invalid email or password',
+                    action: <ToastAction altText="Goto schedule to undo">Undo</ToastAction>,
+                });
+            }
+
         },
     });
 

@@ -9,6 +9,8 @@ import { Label } from '@/components/ui/label'
 import {auth} from '@/firebaseConfig'
 import { useNavigate } from 'react-router-dom'
 import { Auth } from 'firebase/auth'
+import {ToastAction} from "@/components/ui/toast";
+import {toast} from "@/hooks/use-toast";
 
 export default function Registration() {
     const navigate = useNavigate();
@@ -22,14 +24,26 @@ export default function Registration() {
             password: Yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
         }),
         onSubmit: async (values, { setSubmitting, setErrors }) => {
+
             try {
                 const user = await createUserWithEmailAndPassword(auth, values.email, values.password);
                 const token = await user.user.getIdToken()
                 localStorage.setItem("token" , token)
+                toast({
+                    title: "Success",
+                    description: "Welcome User! Happy Note Taking.",
+                    action: <ToastAction altText="Goto schedule to undo">Undo</ToastAction>,
+                });
                 navigate('/home')
             } catch (error) {
                 setErrors({ password: 'Invalid email or password' })
                 localStorage.removeItem("token" )
+                toast({
+                    style:{backgroundColor:" #ff6b6b"},
+                    title: "Error",
+                    description: 'Invalid email or password',
+                    action: <ToastAction altText="Goto schedule to undo">Undo</ToastAction>,
+                });
 
             }
             setSubmitting(false)

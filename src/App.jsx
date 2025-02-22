@@ -7,6 +7,7 @@ import {
 import React, {Suspense} from "react";
 import {Routes , Route} from "react-router-dom";
 import Navbar from "@/components/NavBar/NavBar.tsx";
+import {Toaster} from "@/components/ui/toaster.tsx";
 
 export default function App() {
 
@@ -32,6 +33,7 @@ export default function App() {
                                 <Route key={key} path={page.path} element={page.element}/>
                             ))}
                     </Routes>
+                    <Toaster></Toaster>
                 </Suspense>
             </div>
         </div>
