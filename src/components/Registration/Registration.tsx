@@ -1,6 +1,6 @@
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
 import { initializeApp } from 'firebase/app'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -10,9 +10,9 @@ import app from '@/firebaseConfig'
 import { useNavigate } from 'react-router-dom'
 import { Auth } from 'firebase/auth'
 
-export default function Login() {
-    const navigate = useNavigate()
+export default function Registration() {
     const  auth = getAuth(app);
+    const navigate = useNavigate();
     const formik = useFormik({
         initialValues: {
             email: '',
@@ -24,7 +24,7 @@ export default function Login() {
         }),
         onSubmit: async (values, { setSubmitting, setErrors }) => {
             try {
-                await signInWithEmailAndPassword(auth, values.email, values.password)
+                await createUserWithEmailAndPassword(auth, values.email, values.password);
                 navigate('/home')
             } catch (error) {
                 setErrors({ password: 'Invalid email or password' })
@@ -36,8 +36,8 @@ export default function Login() {
     return (
         <Card className="w-[350px] ">
             <CardHeader>
-                <CardTitle>Login</CardTitle>
-                <CardDescription>Sign in to your account</CardDescription>
+                <CardTitle>Register</CardTitle>
+                <CardDescription>Create your account</CardDescription>
             </CardHeader>
             <CardContent>
                 <form onSubmit={formik.handleSubmit}>
@@ -67,15 +67,12 @@ export default function Login() {
                             ) : null}
                         </div>
                     </div>
-                    <CardFooter className="flex flex-row justify-end mt-4">
-                        <div className="w-100">
-                            <Button type="button">Cancel</Button>
-                            <Button type="submit" variant="default" disabled={formik.isSubmitting}>
-                                {formik.isSubmitting ? 'Signing in...' : 'Login'}
-                            </Button>
-                        </div>
+                    <CardFooter className="flex justify-between mt-4">
+                        <Button type="button">Cancel</Button>
+                        <Button type="submit" variant="default" disabled={formik.isSubmitting}>
+                            {formik.isSubmitting ? 'Signing in...' : 'Login'}
+                        </Button>
                     </CardFooter>
-
                 </form>
             </CardContent>
         </Card>
