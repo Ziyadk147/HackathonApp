@@ -23,17 +23,21 @@ export default function Registration() {
         }),
         onSubmit: async (values, { setSubmitting, setErrors }) => {
             try {
-                await createUserWithEmailAndPassword(auth, values.email, values.password);
+                const user = await createUserWithEmailAndPassword(auth, values.email, values.password);
+                const token = await user.user.getIdToken()
+                localStorage.setItem("token" , token)
                 navigate('/home')
             } catch (error) {
                 setErrors({ password: 'Invalid email or password' })
+                localStorage.removeItem("token" )
+
             }
             setSubmitting(false)
         },
     })
 
     return (
-        <Card className="w-[350px] ">
+        <Card >
             <CardHeader>
                 <CardTitle>Register</CardTitle>
                 <CardDescription>Create your account</CardDescription>
@@ -46,6 +50,7 @@ export default function Registration() {
                             <Input
                                 id="email"
                                 type="email"
+                                className={"border  border-b-4 border-r-4 border-stone-950"}
                                 placeholder="Enter your email"
                                 {...formik.getFieldProps('email')}
                             />
@@ -58,6 +63,7 @@ export default function Registration() {
                             <Input
                                 id="password"
                                 type="password"
+                                className={"border  border-b-4 border-r-4 border-stone-950"}
                                 placeholder="Enter your password"
                                 {...formik.getFieldProps('password')}
                             />
@@ -66,10 +72,9 @@ export default function Registration() {
                             ) : null}
                         </div>
                     </div>
-                    <CardFooter className="flex justify-between mt-4">
-                        <Button type="button">Cancel</Button>
-                        <Button type="submit" variant="default" disabled={formik.isSubmitting}>
-                            {formik.isSubmitting ? 'Signing in...' : 'Login'}
+                    <CardFooter className="flex justify-end mt-4">
+                        <Button type="submit" className={"bg-bg border  border-b-4 border-r-4 border-stone-950"} variant="default" disabled={formik.isSubmitting}>
+                            {formik.isSubmitting ? 'Registering ...' : 'Register'}
                         </Button>
                     </CardFooter>
                 </form>

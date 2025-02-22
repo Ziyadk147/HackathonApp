@@ -35,7 +35,7 @@ export default function Login() {
     })
 
     return (
-        <Card className="w-[350px] ">
+        <Card >
             <CardHeader>
                 <CardTitle>Login</CardTitle>
                 <CardDescription>Sign in to your account</CardDescription>
@@ -48,6 +48,7 @@ export default function Login() {
                             <Input
                                 id="email"
                                 type="email"
+                                className={"border  border-b-4 border-r-4 border-stone-950"}
                                 placeholder="Enter your email"
                                 {...formik.getFieldProps('email')}
                             />
@@ -60,6 +61,7 @@ export default function Login() {
                             <Input
                                 id="password"
                                 type="password"
+                                className={"border  border-b-4 border-r-4 border-stone-950"}
                                 placeholder="Enter your password"
                                 {...formik.getFieldProps('password')}
                             />
@@ -70,8 +72,7 @@ export default function Login() {
                     </div>
                     <CardFooter className="flex flex-row justify-end mt-4">
                         <div className="w-100">
-                            <Button type="button">Cancel</Button>
-                            <Button type="submit" variant="default" disabled={formik.isSubmitting}>
+                            <Button type="submit" className={"bg-bg  border  border-b-4 border-r-4 border-stone-950 "} variant="default" disabled={formik.isSubmitting}>
                                 {formik.isSubmitting ? 'Signing in...' : 'Login'}
                             </Button>
                         </div>

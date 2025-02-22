@@ -9,12 +9,12 @@ export default function Home(){
     const navigate = useNavigate()
     useEffect(() => {
         if(!token){
-            navigate('/login')
+            navigate('/')
         }
     }, [token]);
     return (
         <>
- 
+
             <div className={"flex flex-col h-full w-[80%] justify-center items-center"}>
 
                 {/*<Card className={"w-full bg-stone-100 p-4"}>*/}

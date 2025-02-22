@@ -13,10 +13,10 @@ export default function App() {
     const Login = React.lazy(() => import("./components/Login/Login.tsx"))
     const Register = React.lazy(() => import("./components/Registration/Registration.tsx"))
     const Home = React.lazy(() => import("./components/Home/Home.tsx"))
+    const Authentication = React.lazy(() => import("./components/Authentication/Authentication.tsx"))
 
     const pages = [
-        {name: "Login" , path:"/login" , element: <Login />},
-        {name: "Registration" , path:"/" , element: <Register />},
+        {name: "authentication" , path:"/" , element: <Authentication />},
         {name: "Home" , path:"/home" , element: <Home />},
     ]
 
