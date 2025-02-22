@@ -45,11 +45,11 @@ export default function ModalButton({ edit = false, onUpdate, buttonName, title,
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className={`${buttonColor ?? "bg-main"} p-4 mx-2`} onClick={() => setOpen(true)}>
+                <Button className={`${buttonColor ?? "bg-main"} p-4 mx-2 border border-b-4 border-r-4 border-stone-950`} onClick={() => setOpen(true)}>
                     {buttonName || (edit ? 'Edit Note' : 'Create Note')}
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] bg-main">
+            <DialogContent className="sm:max-w-[425px] bg-main border border-b-4 border-r-4 border-stone-950">
                 <DialogHeader>
                     <DialogTitle>{edit ? 'Edit Your Note' : 'Create Your Note'}</DialogTitle>
                     <DialogDescription>{description || (edit ? 'Modify your note.' : 'Create a new note!')}</DialogDescription>
@@ -61,7 +61,7 @@ export default function ModalButton({ edit = false, onUpdate, buttonName, title,
                             id="title"
                             name="title"
                             type="text"
-                            className="col-span-3"
+                            className="col-span-3 border border-b-4 border-r-4 border-stone-950"
                             value={formik.values.title}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
@@ -75,7 +75,7 @@ export default function ModalButton({ edit = false, onUpdate, buttonName, title,
                         <Textarea
                             id="content"
                             name="content"
-                            className="col-span-3"
+                            className="col-span-3 border border-b-4 border-r-4 border-stone-950"
                             value={formik.values.content}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}

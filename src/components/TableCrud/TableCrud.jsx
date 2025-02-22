@@ -16,10 +16,13 @@ import deleteNote from "@/Helpers/CRUD/deleteNote.js";
 import { auth } from "../../firebaseConfig.js";
 import { signOut } from "firebase/auth";
 import {useNavigate} from "react-router-dom";
+import getModel from "@/Helpers/getModel.js";
 
 export default function TableCrud() {
     const [notes, setNotes] = useState([]);
     const navigate = useNavigate()
+
+
     async function getNote() {
         const note = await getNotes();
         setNotes(note);
@@ -43,15 +46,17 @@ export default function TableCrud() {
             console.error("Error logging out", error);
         }
     }
+
+
     return (
         <>
             <div className="flex flex-row w-full justify-end mb-2">
-                <Button className={"bg-main"} onClick={handleLogout}>
+                <Button className={"bg-main border border-b-4 border-r-4 border-stone-950"} onClick={handleLogout}>
                     Logout
                 </Button>
                 <ModalButton onUpdate={getNote} buttonName="Create Note" />
             </div>
-            <div className="flex flex-row w-full boxShadowY boxShadowX">
+            <div className="flex flex-row w-full border border-b-4 border-r-4 border-stone-950">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -76,7 +81,10 @@ export default function TableCrud() {
                                             title={item.title}
                                             description={item.title + "'s Note"}
                                             buttonName="View"
-                                            mainContent={<Textarea value={item.content} readOnly className="h-52" />}
+                                            isNoteView={true}
+                                            content={ item.content}
+                                            noteId={item.id}
+                                            onUpdate={getNote}
                                         />
                                         {/* Edit Note Modal - Pass getNote as callback */}
                                         <ModalButton
@@ -88,7 +96,7 @@ export default function TableCrud() {
                                             initialData={item}
                                             onUpdate={getNote} // Refresh notes on updatse
                                         />
-                                        <Button className={"bg-bg"} onClick={() => deletenote(item.id   )}>
+                                        <Button className={"bg-bg border border-b-4 border-r-4 border-stone-950"} onClick={() => deletenote(item.id   )}>
                                             Delete
                                         </Button>
                                     </div>

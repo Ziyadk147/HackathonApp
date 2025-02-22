@@ -6,6 +6,7 @@ const updateNote = async (noteId, newTitle, newContent) => {
     if (!user) return console.error("User not logged in");
 
     try {
+        console.log(noteId, newTitle, newContent)
         const noteRef = doc(db, "users", user.uid, "notes", noteId);
         await updateDoc(noteRef, { title: newTitle, content: newContent });
         console.log("Note updated!");

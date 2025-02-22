@@ -21,8 +21,8 @@ export default function App() {
     ]
 
     return (
-        <div className={"h-screen w-screen bg-bg"}>
-            <div className="flex flex-col h-full justify-center items-center">
+        <div className={"h-screen w-screen bg-custom"}>
+            <div className="flex flex-col h-screen justify-center items-center">
                 {/*<Login></Login>*/}
 
                 <Suspense fallback={<div>Loading...</div>}>
